@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Daftar sparepart dengan informasi harga, supplier, dan quantity">
+    <title>Daftar Sparepart</title>
+    <style>
+        /* Reset default styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(45deg, #41093c, #8e44ad);
+            color: #fff;
+            padding: 50px 0;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 {
+            font-size: 3.2em;
+            font-weight: 700;
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+        }
+
+        header p {
+            font-size: 1.2em;
+            color: #ecf0f1;
+        }
+
+        /* Footer */
+        footer {
+            background-color: #34495e;
+            color: #ecf0f1;
+            text-align: center;
+            padding: 20px;
+            position: fixed;
+            width: 100%;
+            bottom: 0;
+        }
+
+        footer p {
+            font-size: 1em;
+        }
+
+        /* Halaman Utama */
+        #mainContent {
+            padding: 40px;
+            background-color: #fff;
+        }
+
+        /* Pencarian */
+        .search-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+            margin-bottom: 40px;
+        }
+
+        input[type="text"] {
+            padding: 12px 20px;
+            width: 50%;
+            font-size: 1.1em;
+            border-radius: 25px;
+            border: 2px solid #da5db4;
+            outline: none;
+            transition: border 0.3s ease;
+        }
+
+        input[type="text"]:focus {
+            border-color: #8e44ad;
+        }
+
+        /* Daftar Produk */
+        .product-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        .product-card {
+            background: #fff;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 350px; /* Ukuran kotak konsisten */
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .product-card h3 {
+            font-size: 1.6em;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .product-card p {
+            font-size: 1em;
+            color: #7f8c8d;
+            margin-bottom: 15px;
+            flex-grow: 1;
+        }
+
+        .product-card .price {
+            font-size: 1.3em;
+            font-weight: 700;x
+            color: #e74c3c;
+            margin-bottom: 10px;
+        }
+
+        .product-card .quantity {
+            font-size: 1.1em;
+            color: #27ae60;
+            margin-bottom: 15px;
+        }
+
+        .product-card .supplier {
+            font-size: 1.1em;
+            color: #3498db;
+            margin-bottom: 15px;
+        }
+
+        .product-card button {
+            padding: 12px 18px;
+            background-color: #961d90;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1em;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            margin-top: auto;
+        }
+
+        .product-card button:hover {
+            background-color: #8e44ad;
+            transform: scale(1.05);
+        }
+
+        /* Simbol untuk Menambah Sparepart */
+        .add-product-symbol {
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        .add-product-symbol button {
+            background-color: #2ecc71;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            font-size: 2.5em;
+            width: 80px;
+            height: 80px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .add-product-symbol button:hover {
+            background-color: #27ae60;
+        }
+
+        /* Hapus Produk */
+        .delete-btn {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            margin-top: 10px;
+            transition: background-color 0.3s ease;
+        }
+
+        .delete-btn:hover {
+            background-color: #c0392b;
+        }
+
+        /* Responsif */
+        @media (max-width: 768px) {
+            .product-list {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .product-list {
+                grid-template-columns: 1fr;
+            }
+
+            input[type="text"] {
+                width: 80%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Halaman Utama -->
+    <div id="mainContent">
+        <header>
+            <h1>Daftar Sparepart PT. ABC</h1>
+        </header>
+
+        <!-- Pencarian -->
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Cari sparepart..." onkeyup="searchProduct()">
+        </div>
+
+        <!-- Daftar Produk -->
+        <div class="product-list" id="productList">
+            <!-- Produk akan ditampilkan di sini -->
+        </div>
+
+        <!-- Simbol untuk Menambah Sparepart -->
+        <div class="add-product-symbol">
+            <button onclick="openAddProductForm()">+</button>
+        </div>
+
+        <footer>
+            <p>© 2025 PT. ABC Indonesia</p>
+        </footer>
+    </div>
+
+    <div id="addProductForm" style="display:none; position:fixed; bottom: 20px; left: 20px; background-color: white; padding: 20px; box-shadow: 0 8px 15px rgba(0,0,0,0.2); border-radius: 8px; z-index: 1000;">
+        <h2>Tambah Sparepart Baru</h2>
+        <label for="productName">Nama Produk</label>
+        <input type="text" id="productName" placeholder="Nama Produk">
+        <label for="productLocation">Location</label>
+        <input type="text" id="productLocation" placeholder="Locationk">
+        <label for="productPrice">Harga</label>
+        <input type="number" id="productPrice" placeholder="Harga Produk">
+        <label for="productSupplier">Supplier</label>
+        <input type="text" id="productSupplier" placeholder="Nama Supplier">
+        <label for="productQuantity">Quantity</label>
+        <input type="number" id="productQuantity" placeholder="Jumlah Produk">
+        <label for="productUnit">Satuan</label>
+        <select id="productUnit">
+            <option value="Pcs">Pcs</option>
+            <option value="Set">Set</option>
+            <option value="Box">Box</option>
+        </select>
+        <button onclick="addProduct()">Tambah</button>
+        <button onclick="closeAddProductForm()">Tutup</button>
+    </div>
+
+    <script>
+        let products = [
+            { name: "BASLER CAMERA ACA1300", description: "A-01", unit: "Pcs", price: 7000000, supplier: "Nordson Pte. Ltd", quantity: 2 },
+            { name: "OMRON LITHIUM BATTERY", description: "A-02", unit: "Set", price: 620000, supplier: "PT. Sindo Jaya", quantity: 20 },
+            { name: "HEATER FIREROD 240V", description: "A-03", unit: "Pcs", price: 750000, supplier: "PT. Jaya Automation", quantity: 30 },
+            { name: "SMC AIR REGULATOR", description: "A-04", unit: "Pcs", price: 2500000, supplier: "PT. Benwin", quantity: 10 },
+            { name: "MISUMI LINEAR BUSHING LHCKWM8", description: "A-05", unit: "Pcs", price: 365000, supplier: "PT. Benwin", quantity: 20 },
+            { name: "ADAPTOR POWER SUPPLY AC-DC 12V 2A", description: "A-06", unit: "Unit", price: 185000, supplier: "PT. Benwin", quantity: 10 },
+            { name: "SMC D-M9BL", description: "A-07", unit: "Pcs", price: 352620, supplier: "PT. Benwin", quantity: 30 },
+            { name: "SEP ABUS, ABSOLUTE BATTERY", description: "A-08", unit: "Pcs", price: 1650000, supplier: "Nordson Pte. Ltd", quantity: 10 },
+            { name: "FEMALE CONNECTOR, SMC KQB2F2-04", description: "A-09", unit: "Pcs", price: 85000, supplier: "PT. Benwin", quantity: 10 },
+            { name: "DISPOSABLE SYRINGE 1ML", description: "A-10", unit: "Box", price: 250000, supplier: "PT. Benwin", quantity: 10 },
+            { name: "MICRO SWITCH 10A", description: "B-01", unit: "Pcs", price: 180000, supplier: "PT. Xyz Elektronik", quantity: 50 },
+            { name: "SMC AIR CYLINDER", description: "B-02", unit: "Set", price: 1000000, supplier: "PT. Maju", quantity: 12 },
+            { name: "LINEAR RAIL RGH", description: "B-03", unit: "Pcs", price: 2000000, supplier: "PT. Tiga S", quantity: 5 }
+        ];
+
+        function displayProducts(filteredProducts) {
+            const productList = document.getElementById("productList");
+            productList.innerHTML = "";
+
+            if (filteredProducts.length === 0) {
+                productList.innerHTML = "<p class='no-results' style='text-align:center; color: #999;'>Tidak ada produk yang ditemukan</p>";
+                return;
+            }
+
+            filteredProducts.forEach((product, index) => {
+                const productHTML = `
+                    <div class="product-card">
+                        <h3>${product.name}</h3>
+                        <p>${product.description}</p>
+                        <p class="price">Rp ${product.price.toLocaleString()}</p>
+                        <p class="quantity">Stok: ${product.quantity} ${product.unit}</p>
+                        <p class="supplier">Supplier: ${product.supplier}</p>
+                        <button onclick="addStock(${index})">Add Stock</button>
+                        <button class="delete-btn" onclick="deleteProduct(${index})">Hapus</button>
+                    </div>
+                `;
+                productList.innerHTML += productHTML;
+            });
+        }
+
+        function searchProduct() {
+            const searchInput = document.getElementById("searchInput").value.toLowerCase();
+            const filteredProducts = products.filter(product => 
+                product.name.toLowerCase().includes(searchInput) || product.description.toLowerCase().includes(searchInput)
+            );
+            displayProducts(filteredProducts);
+        }
+
+        function openAddProductForm() {
+            document.getElementById("addProductForm").style.display = "block";
+        }
+
+        function closeAddProductForm() {
+            document.getElementById("addProductForm").style.display = "none";
+        }
+
+        function addProduct() {
+            const name = document.getElementById("productName").value;
+            const description = document.getElementById("productDescription").value;
+            const price = document.getElementById("productPrice").value;
+            const supplier = document.getElementById("productSupplier").value;
+            const quantity = document.getElementById("productQuantity").value;
+            const unit = document.getElementById("productUnit").value;
+
+            if (!name || !description || !price || !supplier || !quantity || !unit) {
+                alert("Semua kolom harus diisi!");
+                return;
+            }
+
+            const newProduct = { name, description, unit, price: parseInt(price), supplier, quantity: parseInt(quantity) };
+            products.push(newProduct);
+            displayProducts(products);
+
+            document.getElementById("productName").value = "";
+            document.getElementById("productDescription").value = "";
+            document.getElementById("productPrice").value = "";
+            document.getElementById("productSupplier").value = "";
+            document.getElementById("productQuantity").value = "";
+            document.getElementById("productUnit").value = "Pcs";
+
+            closeAddProductForm();
+        }
+
+        function addStock(index) {
+            const product = products[index];
+            product.quantity += 1;
+            displayProducts(products);
+        }
+
+        function deleteProduct(index) {
+            products.splice(index, 1);
+            displayProducts(products);
+        }
+
+        window.onload = function() {
+            displayProducts(products);
+        };
+    </script>
+
+</body>
+</html>
